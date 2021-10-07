@@ -9,7 +9,7 @@ final class OrphanLabelsCleaner
 
     private function __construct(string $baseUrl, string $authToken)
     {
-        $this->baseUrl = $baseUrl;
+        $this->baseUrl = rtrim($baseUrl, '/');
         $this->authToken = $authToken;
     }
 
