@@ -13,6 +13,7 @@ final class OrphanLabelsCleaner
         $this->authToken = $authToken;
     }
 
+    /** @param array<int, string> $arguments */
     public static function fromCli(array $arguments): self
     {
         $errors = [];
@@ -50,6 +51,7 @@ final class OrphanLabelsCleaner
         echo PHP_EOL;
     }
 
+    /** @return array<int, array<string, mixed>> */
     private function getProjects(): array
     {
         $resource = curl_init();
@@ -64,7 +66,7 @@ final class OrphanLabelsCleaner
 
         curl_close($resource);
 
-        $response = (array)json_decode($response, true);
+        $response = (array)json_decode((string)$response, true);
 
         if (array_key_exists('error', $response)) {
             self::exitWithError([$response['error_description'] ?? '']);
@@ -73,17 +75,7 @@ final class OrphanLabelsCleaner
         return $response;
     }
 
-    private static function exitWithError(array $errors) {
-        foreach ($errors as $error) {
-            $error = '' === trim($error) ? 'Unknown.' : $error;
-
-            echo sprintf('[ERROR] %s ', $error) . PHP_EOL;
-        }
-
-        echo PHP_EOL;
-        exit(1);
-    }
-
+    /** @return array<int, array<string, mixed>> */
     private function getProjectLabels(int $projectId): array
     {
         $resource = curl_init();
@@ -102,7 +94,7 @@ final class OrphanLabelsCleaner
 
         curl_close($resource);
 
-        $response = (array)json_decode($response, true);
+        $response = (array)json_decode((string)$response, true);
 
         if (array_key_exists('error', $response)) {
             self::exitWithError([$response['error_description'] ?? '']);
@@ -111,6 +103,10 @@ final class OrphanLabelsCleaner
         return $response;
     }
 
+    /**
+     * @param array<int, array<string, mixed>> $labels
+     * @return array<int, array<string, mixed>>
+     */
     private function filterLabels(array $labels): array
     {
         return array_filter($labels, function ($label) {
@@ -137,6 +133,7 @@ final class OrphanLabelsCleaner
         });
     }
 
+    /** @param array<int, array<string, mixed>> $labels */
     private function deleteLabels(int $projectId, array $labels): void
     {
         foreach ($labels as $label) {
@@ -168,11 +165,24 @@ final class OrphanLabelsCleaner
 
         curl_close($resource);
 
-        $response = (array)json_decode($response, true);
+        $response = (array)json_decode((string)$response, true);
 
         if (array_key_exists('error', $response)) {
             self::exitWithError([$response['error_description'] ?? '']);
         }
+    }
+
+    /** @param array<int, string> $errors */
+    private static function exitWithError(array $errors): void
+    {
+        foreach ($errors as $error) {
+            $error = '' === trim($error) ? 'Unknown.' : $error;
+
+            echo sprintf('[ERROR] %s ', $error) . PHP_EOL;
+        }
+
+        echo PHP_EOL;
+        exit(1);
     }
 }
 
