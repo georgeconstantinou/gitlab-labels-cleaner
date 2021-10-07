@@ -115,17 +115,17 @@ final class OrphanLabelsCleaner
             }
 
             if (0 < $label['open_issues_count']) {
-                echo '[INFO] ' . $label['name'] . ' has open issues' . PHP_EOL;
+                echo '[SKIP] ' . $label['name'] . ' has open issues' . PHP_EOL;
                 return false;
             }
 
             if (0 < $label['closed_issues_count']) {
-                echo '[INFO] ' . $label['name'] . ' has closed issues' . PHP_EOL;
+                echo '[SKIP] ' . $label['name'] . ' has closed issues' . PHP_EOL;
                 return false;
             }
 
             if (0 < $label['open_merge_requests_count']) {
-                echo '[INFO] ' . $label['name'] . ' has open merge requests' . PHP_EOL;
+                echo '[SKIP] ' . $label['name'] . ' has open merge requests' . PHP_EOL;
                 return false;
             }
 
